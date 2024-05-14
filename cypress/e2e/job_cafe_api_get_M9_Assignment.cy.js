@@ -42,20 +42,38 @@ describe('GET Job Tests for M9 Assignment', () => {
 
     })
 
-    it('search by seniority', () => {
-        cy.request('http://api.jobka.net:8081/jobs/?seniority=Developer').then((response) => {
-            let resultsList = response.body.content
-            console.log(resultsList)
-            expect(response.status).equal(204)
-            for(let i=0; i<resultsList.length; i++) {
-                expect(resultsList[i].seniority).equal('Developer')
+            it('error message wrong location request', () => {
+                cy.request('http://api.jobka.net:8081/jobs/').then((response) => {
+                    console.log(response.body.content),
 
-            }
+                        expect(response.body.content[9]).have.property("location")
+                    expect(response.body.content[9].location).equal("Moscow")
+                })
 
-        })
-        
-        })
-        
-        })
+            })
 
+            it('search by seniority', () => {
+                cy.request('http://api.jobka.net:8081/jobs/?seniority=Developer').then((response) => {
+                    let resultsList = response.body.content
+                    console.log(resultsList)
+                    expect(response.status).equal(204)
+                    for (let i = 0; i < resultsList.length; i++) {
+                        expect(resultsList[i].seniority).equal('Developer')
+                    }
 
+                })
+
+            })
+
+            it('shows error message that job listing missing company details', () => {
+                cy.request('http://api.jobka.net:8081/jobs/').then((response) => {
+                    console.log(response.body.content),
+                        expect(response.body.content[4]).have.property("company"),
+                        expect(response.body.content[4].company).not.null
+
+                })
+            })
+
+  })
+
+       
